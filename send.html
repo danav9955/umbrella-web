@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Assets - Umbrella</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <button class="btn-back" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="brand">Send Assets</div>
+            <div style="width: 32px;"></div> </header>
+
+        <div class="input-group">
+            <label>Recipient Address</label>
+            <input type="text" class="form-input" placeholder="0x..." id="address-input">
+        </div>
+
+        <div class="input-group">
+            <label>Amount (USDT)</label>
+            <input type="number" class="form-input" placeholder="0.00" id="amount-input">
+        </div>
+
+        <div class="list-item" style="margin-top: 20px;">
+            <div class="coin-info">
+                <i class="fas fa-gas-pump" style="color: var(--text-muted);"></i>
+                <span>Estimated Gas Fee</span>
+            </div>
+            <span>$5.00</span>
+        </div>
+
+        <button class="btn-primary" style="margin-top: 30px;" onclick="simulateSend()">Next</button>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function simulateSend() {
+            const addr = document.getElementById('address-input').value;
+            const amt = document.getElementById('amount-input').value;
+            
+            if(!addr || !amt) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            // Logic to redirect or show modal
+            alert(`Simulating send of ${amt} USDT to ${addr}...`);
+        }
+    </script>
+</body>
+</html>
