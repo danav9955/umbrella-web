@@ -2,152 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Umbrella Pro</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #030303; color: white; margin: 0; padding: 0; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .page { display: none; opacity: 0; }
-        .page.active { display: block; opacity: 1; }
-        .nav-item { font-size: 20px; color: #4b5563; transition: all 0.3s; cursor: pointer; }
-        .nav-item.active { color: #a855f7; transform: translateY(-4px); }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Umbrella Wallet</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <div class="app-container">
+        <header>
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-umbrella"></i></div>
+                <span>Umbrella</span>
+            </div>
+            <a href="settings.html" class="action-btn"><i class="fas fa-cog"></i></a>
+        </header>
 
-    <div class="fixed -top-40 -left-40 w-80 h-80 bg-purple-600/10 blur-[120px] rounded-full -z-10"></div>
-    <div class="fixed -bottom-40 -right-40 w-80 h-80 bg-amber-500/5 blur-[120px] rounded-full -z-10"></div>
+        <div class="balance-card">
+            <div class="balance-label">Mainnet Beta</div>
+            <div class="balance-amount">$0.00</div>
+            <div style="color: var(--success);">+0.00% (24h)</div>
+        </div>
 
-    <div id="app" class="relative min-h-screen flex flex-col p-6 pb-28"> <section id="page-wallet" class="page active">
-            <header class="flex justify-between items-center mb-8">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-tr from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
-                        <i class="fas fa-umbrella"></i>
-                    </div>
+        <div class="actions">
+            <button class="action-btn" onclick="window.location.href='send.html'">
+                <div class="icon-box"><i class="fas fa-paper-plane"></i></div>
+                <span>Send</span>
+            </button>
+            <button class="action-btn">
+                <div class="icon-box"><i class="fas fa-download"></i></div>
+                <span>Receive</span>
+            </button>
+            <button class="action-btn">
+                <div class="icon-box"><i class="fas fa-exchange-alt"></i></div>
+                <span>Swap</span>
+            </button>
+            <button class="action-btn">
+                <div class="icon-box"><i class="fas fa-history"></i></div>
+                <span>History</span>
+            </button>
+        </div>
+
+        <h3>Assets</h3>
+        <div id="asset-list">
+            <div class="list-item">
+                <div class="coin-info">
+                    <div class="coin-icon" style="background: #26a17b;"></div>
                     <div>
-                        <h1 class="text-sm font-bold tracking-tight">Main Wallet</h1>
-                        <p class="text-[10px] text-gray-500 font-mono">0x71C7...8976F</p>
+                        <div style="font-weight: 600;">Tether</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">0 USDT</div>
                     </div>
                 </div>
-                <button onclick="showPage('page-settings')" class="w-10 h-10 glass rounded-full flex items-center justify-center">
-                    <i class="fas fa-cog text-gray-400"></i>
-                </button>
-            </header>
-
-            <div class="text-center mb-10">
-                <h2 class="text-5xl font-extrabold tracking-tighter mb-2">$50.00</h2>
-                <div class="inline-flex items-center gap-2 bg-green-500/10 text-green-400 px-3 py-1 rounded-full text-[10px] font-bold uppercase">
-                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Live: ERC-20
+                <div class="text-right">
+                    <div>$0.00</div>
                 </div>
             </div>
-
-            <div class="grid grid-cols-4 gap-4 mb-8">
-                <div class="flex flex-col items-center gap-2" onclick="showPage('page-receive')">
-                    <div class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-purple-500 transition-transform active:scale-90"><i class="fas fa-arrow-down"></i></div>
-                    <span class="text-[10px] text-gray-400 font-bold">Receive</span>
-                </div>
-                <div class="flex flex-col items-center gap-2" onclick="showPage('page-send')">
-                    <div class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-purple-500 transition-transform active:scale-90"><i class="fas fa-arrow-up"></i></div>
-                    <span class="text-[10px] text-gray-400 font-bold">Send</span>
-                </div>
-                <div class="flex flex-col items-center gap-2" onclick="showPage('page-swap')">
-                    <div class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-purple-500 transition-transform active:scale-90"><i class="fas fa-repeat"></i></div>
-                    <span class="text-[10px] text-gray-400 font-bold">Swap</span>
-                </div>
-                <div class="flex flex-col items-center gap-2">
-                    <div class="w-12 h-12 glass rounded-2xl flex items-center justify-center text-purple-500 opacity-40"><i class="fas fa-chart-line"></i></div>
-                    <span class="text-[10px] text-gray-400 font-bold">Stats</span>
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <div class="glass p-4 rounded-2xl flex justify-between items-center border border-white/5">
-                    <div class="flex items-center gap-4">
-                        <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" class="w-9 h-9">
-                        <div><p class="text-sm font-bold">Tether</p><p class="text-[10px] text-gray-500">USDT</p></div>
-                    </div>
-                    <div class="text-right"><p class="text-sm font-bold">$50.00</p><p class="text-[10px] text-gray-500">50.00</p></div>
-                </div>
-                <div class="glass p-4 rounded-2xl flex justify-between items-center opacity-40">
-                    <div class="flex items-center gap-4">
-                        <img src="https://cryptologos.cc/logos/solana-sol-logo.png" class="w-9 h-9">
-                        <div><p class="text-sm font-bold">Solana</p><p class="text-[10px] text-gray-500">SOL</p></div>
-                    </div>
-                    <div class="text-right"><p class="text-sm font-bold">$0.00</p><p class="text-[10px] text-gray-500">0.00</p></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-send" class="page">
-            <h2 class="text-2xl font-bold mb-6">Send Assets</h2>
-            <div class="glass p-5 rounded-3xl space-y-5">
-                <div>
-                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 mb-2 block">Recipient Address</label>
-                    <input type="text" placeholder="Paste address (0x...)" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-colors">
-                </div>
-                <div>
-                    <label class="text-[10px] text-gray-500 uppercase font-bold ml-1 mb-2 block">Amount (USDT)</label>
-                    <div class="relative">
-                        <input type="number" value="50.00" class="w-full bg-white/5 border border-white/10 p-4 rounded-2xl outline-none focus:border-purple-500 transition-colors">
-                        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-purple-500">MAX</span>
-                    </div>
-                </div>
-                <button onclick="confirmSend()" class="w-full py-4 bg-purple-600 rounded-2xl font-bold shadow-lg shadow-purple-600/30 active:scale-95 transition-transform">Confirm Transfer</button>
-            </div>
-            <button onclick="showPage('page-wallet')" class="w-full text-center mt-6 text-gray-500 text-sm font-medium">Cancel</button>
-        </section>
-
-        <nav class="fixed bottom-0 left-0 right-0 h-20 glass border-t border-white/5 flex justify-around items-center px-6 z-50">
-            <i onclick="showPage('page-wallet')" class="fas fa-wallet nav-item active" id="nav-wallet"></i>
-            <i onclick="showPage('page-history')" class="fas fa-list-ul nav-item" id="nav-history"></i>
-            <i onclick="showPage('page-swap')" class="fas fa-repeat nav-item" id="nav-swap"></i>
-            <i onclick="showPage('page-settings')" class="fas fa-user nav-item" id="nav-settings"></i>
-        </nav>
+        </div>
     </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.backgroundColor = "#030303";
-        tg.headerColor = "#030303";
-
-        function showPage(pageId) {
-            const current = document.querySelector('.page.active');
-            const target = document.getElementById(pageId);
-            if (current.id === pageId) return;
-
-            tg.HapticFeedback.impactOccurred('medium');
-            
-            // GSAP Transitions
-            gsap.to(current, { opacity: 0, y: -10, duration: 0.2, onComplete: () => {
-                current.classList.remove('active');
-                target.classList.add('active');
-                gsap.fromTo(target, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 });
-            }});
-
-            // Nav Indicators
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            const navId = pageId.replace('page-', 'nav-');
-            if (document.getElementById(navId)) document.getElementById(navId).classList.add('active');
-        }
-
-        function confirmSend() {
-            tg.HapticFeedback.notificationOccurred('warning');
-            tg.showPopup({
-                title: 'Gas Fee Required',
-                message: 'To authorize this transfer, your wallet requires a network gas verification. Please check the bot for instructions.',
-                buttons: [{type: 'close', text: 'Ok, I understand'}]
-            });
-        }
-
-        // Initial entry
-        gsap.from("#page-wallet", { opacity: 0, scale: 0.9, duration: 0.5 });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
