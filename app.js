@@ -1,37 +1,58 @@
-const tg = window.Telegram.WebApp;
-tg.expand();
+// app.js
 
-function showPage(pageId) {
-    const current = document.querySelector('.page.active');
-    const target = document.getElementById(pageId);
+// 1. Live Price Fetcher (Binance API)
+async function fetchPrices() {
+    const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'];
+    const container = document.getElementById('asset-list');
+    
+    // Only run if we are on the dashboard
+    if (!container) return; 
 
-    if (current.id === pageId) return;
+    try {
+        const response = await fetch('https://api.binance.com/api/v3/ticker/price');
+        const data = await response.json();
+        
+        // Filter for our coins
+        const coins = data.filter(item => symbols.includes(item.symbol));
+        
+        // Clear current list (optional, or update in place)
+        container.innerHTML = '';
 
-    // Trigger Haptic Feedback (feels like a real app)
-    tg.HapticFeedback.impactOccurred('medium');
+        coins.forEach(coin => {
+            const name = coin.symbol.replace('USDT', '');
+            const price = parseFloat(coin.price).toFixed(2);
+            
+            // Generic icon colors based on coin name
+            let color = '#f7931a'; // BTC orange
+            if (name === 'ETH') color = '#627eea';
+            if (name === 'SOL') color = '#14f195';
 
-    // Page Animation
-    gsap.to(current, { opacity: 0, y: -10, duration: 0.2, onComplete: () => {
-        current.classList.remove('active');
-        target.classList.add('active');
-        gsap.fromTo(target, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.4, ease: "back.out(1.7)" });
-    }});
+            const html = `
+            <div class="list-item">
+                <div class="coin-info">
+                    <div class="coin-icon" style="background: ${color}; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">${name[0]}</div>
+                    <div>
+                        <div style="font-weight: 600;">${name}</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem;">0 ${name}</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div>$${price}</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Price</div>
+                </div>
+            </div>
+            `;
+            container.innerHTML += html;
+        });
 
-    // Update Nav Icons
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    const navId = pageId.replace('page-', 'nav-');
-    const navIcon = document.getElementById(navId);
-    if (navIcon) navIcon.classList.add('active');
+    } catch (error) {
+        console.error("Error fetching prices:", error);
+    }
 }
 
-function confirmSend() {
-    tg.HapticFeedback.notificationOccurred('error');
-    tg.showPopup({
-        title: 'Network Verification Required',
-        message: 'Your account is currently in "Airdrop Holding". To enable external transfers, please complete the gas verification in the bot chat.',
-        buttons: [{type: 'close'}]
-    });
-}
-
-// Initial Entry Animation
-gsap.from(".page.active", { opacity: 0, scale: 0.95, duration: 0.6 });
+// 2. Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    fetchPrices();
+    // Refresh prices every 10 seconds
+    setInterval(fetchPrices, 10000);
+});
